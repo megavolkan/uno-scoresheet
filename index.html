@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Uno Skor Çetelesi</title>
+<style>
+  :root {
+    --uno-red: #e3392c;
+    --uno-yellow: #f4c511;
+    --uno-green: #2f9e44;
+    --uno-blue: #1864d6;
+
+    --bg: #f2efe9;
+    --surface: #ffffff;
+    --surface-2: #f6f4ef;
+    --text: #1b1b1b;
+    --text-dim: #6b6b6b;
+    --border: #1b1b1b;
+    --shadow: rgba(0,0,0,0.18);
+    --danger: #c81e1e;
+  }
+
+  [data-theme="dark"] {
+    --bg: #14141a;
+    --surface: #1f1f29;
+    --surface-2: #262633;
+    --text: #f1f1f1;
+    --text-dim: #a4a4b0;
+    --border: #f1f1f1;
+    --shadow: rgba(0,0,0,0.5);
+    --danger: #ff6b6b;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+
+  .app {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 16px 16px 24px;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 3px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 14px;
+    transform: rotate(-8deg);
+    box-shadow: 0 3px 0 var(--shadow);
+    background: conic-gradient(var(--uno-red) 0 25%, var(--uno-yellow) 25% 50%, var(--uno-green) 50% 75%, var(--uno-blue) 75% 100%);
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  }
+
+  h1.title {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+  }
+
+  .theme-toggle {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 0 var(--shadow);
+  }
+
+  .card h2 {
+    margin: 0 0 12px;
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 2px solid var(--border);
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    text-align: center;
+    margin-bottom: 10px;
+    min-height: 48px;
+    color: #fff;
+    box-shadow: 0 3px 0 var(--shadow);
+    transition: transform .05s ease;
+  }
+  .btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--shadow); }
+
+  .btn-red { background: var(--uno-red); }
+  .btn-yellow { background: var(--uno-yellow); color: #1b1b1b; }
+  .btn-green { background: var(--uno-green); }
+  .btn-blue { background: var(--uno-blue); }
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    box-shadow: none;
+  }
+  .btn-ghost {
+    background: var(--surface-2);
+    color: var(--text);
+    box-shadow: none;
+    border: 2px dashed var(--border);
+  }
+  .btn-sm {
+    padding: 10px 12px;
+    font-size: 14px;
+    min-height: 40px;
+    margin-bottom: 0;
+  }
+  .btn-danger { background: var(--danger); }
+
+  .row { display: flex; gap: 10px; }
+  .row > * { flex: 1; }
+
+  input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text);
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  label.field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .player-chip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: var(--surface-2);
+    border: 2px solid var(--border);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+
+  .player-chip button {
+    border: none;
+    background: transparent;
+    color: var(--danger);
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    padding: 0 6px;
+  }
+
+  .mode-option {
+    display: block;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    margin-bottom: 8px;
+    cursor: pointer;
+    background: var(--surface-2);
+  }
+  .mode-option.selected {
+    background: var(--uno-yellow);
+    color: #1b1b1b;
+  }
+  .mode-option strong { display: block; font-size: 14px; }
+  .mode-option span { font-size: 12px; color: var(--text-dim); }
+  .mode-option.selected span { color: #3a3a3a; }
+
+  .hidden { display: none !important; }
+
+  .progress-bar {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+
+  .scoreboard {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .player-score-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: 2px solid var(--border);
+    box-shadow: 0 3px 0 var(--shadow);
+    color: #fff;
+  }
+
+  .player-score-card .name {
+    font-weight: 800;
+    font-size: 15px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  }
+  .player-score-card .rank {
+    font-size: 12px;
+    opacity: 0.85;
+    font-weight: 700;
+  }
+  .player-score-card .score {
+    font-size: 22px;
+    font-weight: 800;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  }
+
+  .round-form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .round-form-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .round-form-row .pname {
+    flex: 1;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .round-form-row input {
+    width: 100px;
+    margin-bottom: 0;
+    text-align: center;
+  }
+
+  table.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  table.history-table th, table.history-table td {
+    border-bottom: 1px solid var(--surface-2);
+    padding: 6px 4px;
+    text-align: center;
+  }
+  table.history-table th {
+    color: var(--text-dim);
+    font-weight: 700;
+  }
+  .round-actions button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+
+  details.history-details summary {
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 14px;
+    padding: 4px 0;
+  }
+
+  .winner-banner {
+    text-align: center;
+    padding: 20px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, var(--uno-red), var(--uno-yellow), var(--uno-green), var(--uno-blue));
+    color: #fff;
+    font-weight: 800;
+    margin-bottom: 14px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  }
+  .winner-banner .trophy { font-size: 32px; display: block; margin-bottom: 6px; }
+  .winner-banner .wname { font-size: 22px; }
+
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: var(--surface-2);
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  .history-item .hw { font-weight: 800; }
+  .history-item .hd { color: var(--text-dim); }
+
+  .empty-hint {
+    color: var(--text-dim);
+    font-size: 14px;
+    text-align: center;
+    padding: 10px 0;
+  }
+
+  .toggle-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .toggle-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: var(--surface-2);
+    text-align: center;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .toggle-btn.selected {
+    background: var(--uno-blue);
+    color: #fff;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-badge">UNO</div>
+      <h1 class="title">Skor Çetelesi</h1>
+    </div>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Tema değiştir">🌙</button>
+  </div>
+
+  <!-- ANA MENÜ -->
+  <div id="view-menu">
+    <div class="card" id="continueCard" style="display:none;">
+      <h2>Devam Eden Oyun</h2>
+      <button class="btn btn-green" id="btnContinueGame" type="button">Oyuna Devam Et</button>
+      <button class="btn btn-outline btn-danger" id="btnDiscardGame" type="button">Devam Eden Oyunu Sil</button>
+    </div>
+
+    <div class="card">
+      <h2>Yeni Oyun</h2>
+      <button class="btn btn-red" id="btnNewGame" type="button">Yeni Oyun Başlat</button>
+    </div>
+
+    <div class="card">
+      <h2>Geçmiş Oyunlar</h2>
+      <div id="historyList"></div>
+    </div>
+  </div>
+
+  <!-- YENİ OYUN KURULUMU -->
+  <div id="view-setup" class="hidden">
+    <div class="card">
+      <h2>Oyuncular</h2>
+      <div class="row">
+        <input type="text" id="newPlayerName" placeholder="Oyuncu adı">
+      </div>
+      <button class="btn btn-blue btn-sm" id="btnAddPlayer" type="button" style="margin-bottom:12px;">Ekle</button>
+      <div id="playerList"></div>
+    </div>
+
+    <div class="card">
+      <h2>Oyun Modu</h2>
+      <div id="modeOptions">
+        <div class="mode-option" data-mode="target_up">
+          <strong>Hedefe Ulaş</strong>
+          <span>Belirlenen puana ilk ulaşan kazanır</span>
+        </div>
+        <div class="mode-option" data-mode="target_down">
+          <strong>Hedeften Düş</strong>
+          <span>Başlangıç puanından ilk 0'a inen kazanır</span>
+        </div>
+        <div class="mode-option" data-mode="fixed_rounds">
+          <strong>Sabit El Sayısı</strong>
+          <span>Belirlenen el sayısı sonunda en avantajlı kazanır</span>
+        </div>
+      </div>
+
+      <div id="modeExtra"></div>
+    </div>
+
+    <button class="btn btn-green" id="btnStartGame" type="button">Oyunu Başlat</button>
+    <button class="btn btn-outline" id="btnCancelSetup" type="button">Vazgeç</button>
+  </div>
+
+  <!-- SKOR EKRANI -->
+  <div id="view-game" class="hidden">
+    <div id="winnerBanner"></div>
+
+    <div class="card">
+      <div class="progress-bar" id="gameProgress"></div>
+      <div class="scoreboard" id="scoreboard"></div>
+    </div>
+
+    <div class="card" id="addRoundCard">
+      <h2>Yeni El Ekle</h2>
+      <div class="round-form-grid" id="roundForm"></div>
+      <button class="btn btn-yellow" id="btnSaveRound" type="button">Eli Kaydet</button>
+    </div>
+
+    <div class="card">
+      <details class="history-details">
+        <summary>El Geçmişi</summary>
+        <div id="roundHistory" style="margin-top:10px;"></div>
+      </details>
+    </div>
+
+    <button class="btn btn-outline btn-danger" id="btnEndGame" type="button">Oyunu Bitir</button>
+    <button class="btn btn-outline" id="btnBackToMenu" type="button">Ana Menüye Dön</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var STORAGE_KEY = "uno_scoresheet_v1";
+  var THEME_KEY = "uno_scoresheet_theme";
+  var COLORS = ["red", "yellow", "green", "blue"];
+  var COLOR_HEX = { red: "var(--uno-red)", yellow: "var(--uno-yellow)", green: "var(--uno-green)", blue: "var(--uno-blue)" };
+
+  var state = {
+    currentGame: null,
+    history: []
+  };
+
+  var setupPlayers = [];
+  var setupMode = null;
+
+  // ---------- Persistence ----------
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        state.currentGame = parsed.currentGame || null;
+        state.history = parsed.history || [];
+      }
+    } catch (e) {
+      state = { currentGame: null, history: [] };
+    }
+  }
+
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  // ---------- Theme ----------
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    document.getElementById("themeToggle").textContent = theme === "dark" ? "☀️" : "🌙";
+  }
+
+  function initTheme() {
+    var saved = localStorage.getItem(THEME_KEY);
+    var theme = saved || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    applyTheme(theme);
+  }
+
+  document.getElementById("themeToggle").addEventListener("click", function () {
+    var current = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+    var next = current === "dark" ? "light" : "dark";
+    localStorage.setItem(THEME_KEY, next);
+    applyTheme(next);
+  });
+
+  // ---------- Helpers ----------
+  function uid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+
+  function el(tag, className, text) {
+    var e = document.createElement(tag);
+    if (className) e.className = className;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+
+  function show(viewId) {
+    ["view-menu", "view-setup", "view-game"].forEach(function (id) {
+      document.getElementById(id).classList.toggle("hidden", id !== viewId);
+    });
+  }
+
+  function totalsForGame(game) {
+    var totals = {};
+    game.players.forEach(function (p) {
+      totals[p.id] = game.mode === "target_down" ? game.startScore : 0;
+    });
+    game.rounds.forEach(function (round) {
+      game.players.forEach(function (p) {
+        var delta = round.scores[p.id] || 0;
+        totals[p.id] += delta;
+      });
+    });
+    return totals;
+  }
+
+  function lowerIsBetter(game) {
+    return game.mode === "target_down" || (game.mode === "fixed_rounds" && game.fixedRoundsWinner === "lowest");
+  }
+
+  function checkWinner(game) {
+    if (game.rounds.length === 0) return null;
+    var totals = totalsForGame(game);
+
+    if (game.mode === "target_up") {
+      var winners = game.players.filter(function (p) { return totals[p.id] >= game.targetScore; });
+      if (winners.length === 0) return null;
+      winners.sort(function (a, b) { return totals[b.id] - totals[a.id]; });
+      return winners[0].id;
+    }
+
+    if (game.mode === "target_down") {
+      var downWinners = game.players.filter(function (p) { return totals[p.id] <= 0; });
+      if (downWinners.length === 0) return null;
+      downWinners.sort(function (a, b) { return totals[a.id] - totals[b.id]; });
+      return downWinners[0].id;
+    }
+
+    if (game.mode === "fixed_rounds") {
+      if (game.rounds.length < game.totalRounds) return null;
+      var sorted = game.players.slice().sort(function (a, b) {
+        return game.fixedRoundsWinner === "lowest"
+          ? totals[a.id] - totals[b.id]
+          : totals[b.id] - totals[a.id];
+      });
+      return sorted[0].id;
+    }
+
+    return null;
+  }
+
+  function modeSummary(game) {
+    if (game.mode === "target_up") return "Hedefe Ulaş · " + game.targetScore + " puan";
+    if (game.mode === "target_down") return "Hedeften Düş · " + game.startScore + " puandan 0'a";
+    if (game.mode === "fixed_rounds") return "Sabit El Sayısı · " + game.totalRounds + " el (" + (game.fixedRoundsWinner === "lowest" ? "en düşük kazanır" : "en yüksek kazanır") + ")";
+    return "";
+  }
+
+  // ---------- Render: Menu ----------
+  function renderMenu() {
+    var continueCard = document.getElementById("continueCard");
+    if (state.currentGame && !state.currentGame.finished) {
+      continueCard.style.display = "";
+    } else {
+      continueCard.style.display = "none";
+    }
+
+    var list = document.getElementById("historyList");
+    list.innerHTML = "";
+    if (state.history.length === 0) {
+      list.appendChild(el("div", "empty-hint", "Henüz tamamlanmış oyun yok."));
+    } else {
+      state.history.slice().reverse().forEach(function (g) {
+        var item = el("div", "history-item");
+        var left = el("div");
+        var winnerName = g.players.find(function (p) { return p.id === g.winnerId; });
+        left.appendChild(el("div", "hw", "🏆 " + (winnerName ? winnerName.name : "—")));
+        left.appendChild(el("div", "hd", modeSummary(g)));
+        var right = el("div", "hd", new Date(g.finishedAt).toLocaleDateString("tr-TR"));
+        item.appendChild(left);
+        item.appendChild(right);
+        list.appendChild(item);
+      });
+    }
+  }
+
+  document.getElementById("btnContinueGame").addEventListener("click", function () {
+    show("view-game");
+    renderGame();
+  });
+
+  document.getElementById("btnDiscardGame").addEventListener("click", function () {
+    if (!confirm("Devam eden oyun silinsin mi?")) return;
+    state.currentGame = null;
+    saveState();
+    renderMenu();
+  });
+
+  document.getElementById("btnNewGame").addEventListener("click", function () {
+    setupPlayers = [];
+    setupMode = null;
+    renderSetup();
+    show("view-setup");
+  });
+
+  // ---------- Render: Setup ----------
+  function renderSetup() {
+    var list = document.getElementById("playerList");
+    list.innerHTML = "";
+    setupPlayers.forEach(function (p, idx) {
+      var chip = el("div", "player-chip");
+      chip.appendChild(el("span", null, p.name));
+      var removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.textContent = "✕";
+      removeBtn.addEventListener("click", function () {
+        setupPlayers.splice(idx, 1);
+        renderSetup();
+      });
+      chip.appendChild(removeBtn);
+      list.appendChild(chip);
+    });
+
+    document.querySelectorAll("#modeOptions .mode-option").forEach(function (opt) {
+      opt.classList.toggle("selected", opt.dataset.mode === setupMode);
+    });
+
+    var extra = document.getElementById("modeExtra");
+    extra.innerHTML = "";
+    if (setupMode === "target_up") {
+      extra.appendChild(buildNumberField("targetScoreInput", "Hedef Puan", 500));
+    } else if (setupMode === "target_down") {
+      extra.appendChild(buildNumberField("startScoreInput", "Başlangıç Puanı", 500));
+    } else if (setupMode === "fixed_rounds") {
+      extra.appendChild(buildNumberField("totalRoundsInput", "El Sayısı", 11));
+      var toggleWrap = el("div");
+      toggleWrap.appendChild(el("label", "field-label", "Kazanan"));
+      var row = el("div", "toggle-row");
+      var lowestBtn = el("div", "toggle-btn selected", "En Düşük Puan");
+      lowestBtn.dataset.value = "lowest";
+      var highestBtn = el("div", "toggle-btn", "En Yüksek Puan");
+      highestBtn.dataset.value = "highest";
+      [lowestBtn, highestBtn].forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          lowestBtn.classList.toggle("selected", btn === lowestBtn);
+          highestBtn.classList.toggle("selected", btn === highestBtn);
+        });
+      });
+      row.appendChild(lowestBtn);
+      row.appendChild(highestBtn);
+      toggleWrap.appendChild(row);
+      toggleWrap.id = "fixedRoundsWinnerToggle";
+      extra.appendChild(toggleWrap);
+    }
+  }
+
+  function buildNumberField(id, label, defaultVal) {
+    var wrap = el("div");
+    wrap.appendChild(el("label", "field-label", label));
+    var input = document.createElement("input");
+    input.type = "number";
+    input.id = id;
+    input.value = defaultVal;
+    input.min = "1";
+    wrap.appendChild(input);
+    return wrap;
+  }
+
+  document.getElementById("btnAddPlayer").addEventListener("click", addPlayerFromInput);
+  document.getElementById("newPlayerName").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") addPlayerFromInput();
+  });
+
+  function addPlayerFromInput() {
+    var input = document.getElementById("newPlayerName");
+    var name = input.value.trim();
+    if (!name) return;
+    if (setupPlayers.length >= 10) { alert("En fazla 10 oyuncu eklenebilir."); return; }
+    setupPlayers.push({ id: uid(), name: name });
+    input.value = "";
+    renderSetup();
+    input.focus();
+  }
+
+  document.getElementById("modeOptions").addEventListener("click", function (e) {
+    var opt = e.target.closest(".mode-option");
+    if (!opt) return;
+    setupMode = opt.dataset.mode;
+    renderSetup();
+  });
+
+  document.getElementById("btnCancelSetup").addEventListener("click", function () {
+    show("view-menu");
+    renderMenu();
+  });
+
+  document.getElementById("btnStartGame").addEventListener("click", function () {
+    if (setupPlayers.length < 2) { alert("En az 2 oyuncu eklemelisiniz."); return; }
+    if (!setupMode) { alert("Bir oyun modu seçmelisiniz."); return; }
+
+    var game = {
+      id: uid(),
+      createdAt: Date.now(),
+      players: setupPlayers.slice(),
+      mode: setupMode,
+      targetScore: null,
+      startScore: null,
+      totalRounds: null,
+      fixedRoundsWinner: "lowest",
+      rounds: [],
+      finished: false,
+      winnerId: null
+    };
+
+    if (setupMode === "target_up") {
+      game.targetScore = parseInt(document.getElementById("targetScoreInput").value, 10) || 500;
+    } else if (setupMode === "target_down") {
+      game.startScore = parseInt(document.getElementById("startScoreInput").value, 10) || 500;
+    } else if (setupMode === "fixed_rounds") {
+      game.totalRounds = parseInt(document.getElementById("totalRoundsInput").value, 10) || 11;
+      var selectedToggle = document.querySelector("#fixedRoundsWinnerToggle .toggle-btn.selected");
+      game.fixedRoundsWinner = selectedToggle ? selectedToggle.dataset.value : "lowest";
+    }
+
+    state.currentGame = game;
+    saveState();
+    show("view-game");
+    renderGame();
+  });
+
+  // ---------- Render: Game ----------
+  function renderGame() {
+    var game = state.currentGame;
+    if (!game) { show("view-menu"); renderMenu(); return; }
+
+    var totals = totalsForGame(game);
+    var winnerId = checkWinner(game);
+
+    var banner = document.getElementById("winnerBanner");
+    banner.innerHTML = "";
+    if (winnerId) {
+      var winner = game.players.find(function (p) { return p.id === winnerId; });
+      var b = el("div", "winner-banner");
+      b.appendChild(el("span", "trophy", "🏆"));
+      b.appendChild(el("div", "wname", winner.name + " kazandı!"));
+      banner.appendChild(b);
+      document.getElementById("addRoundCard").style.display = "none";
+    } else {
+      document.getElementById("addRoundCard").style.display = "";
+    }
+
+    var progress = document.getElementById("gameProgress");
+    var progressText = modeSummary(game);
+    if (game.mode === "fixed_rounds") {
+      progressText += " · El " + game.rounds.length + "/" + game.totalRounds;
+    } else {
+      progressText += " · " + game.rounds.length + " el oynandı";
+    }
+    progress.textContent = progressText;
+
+    var sortedPlayers = game.players.slice().sort(function (a, b) {
+      return lowerIsBetter(game) ? totals[a.id] - totals[b.id] : totals[b.id] - totals[a.id];
+    });
+
+    var scoreboard = document.getElementById("scoreboard");
+    scoreboard.innerHTML = "";
+    sortedPlayers.forEach(function (p, idx) {
+      var card = el("div", "player-score-card");
+      var color = COLORS[idx % COLORS.length];
+      card.style.background = COLOR_HEX[color];
+      if (color === "yellow") card.style.color = "#1b1b1b";
+      var left = el("div");
+      left.appendChild(el("div", "name", p.name));
+      left.appendChild(el("div", "rank", "#" + (idx + 1)));
+      card.appendChild(left);
+      card.appendChild(el("div", "score", String(totals[p.id])));
+      scoreboard.appendChild(card);
+    });
+
+    var roundForm = document.getElementById("roundForm");
+    roundForm.innerHTML = "";
+    game.players.forEach(function (p) {
+      var row = el("div", "round-form-row");
+      row.appendChild(el("div", "pname", p.name));
+      var input = document.createElement("input");
+      input.type = "number";
+      input.placeholder = "0";
+      input.dataset.playerId = p.id;
+      input.className = "round-score-input";
+      row.appendChild(input);
+      roundForm.appendChild(row);
+    });
+
+    renderRoundHistory(game, totals);
+  }
+
+  function renderRoundHistory(game, currentTotals) {
+    var container = document.getElementById("roundHistory");
+    container.innerHTML = "";
+    if (game.rounds.length === 0) {
+      container.appendChild(el("div", "empty-hint", "Henüz el oynanmadı."));
+      return;
+    }
+
+    var table = document.createElement("table");
+    table.className = "history-table";
+    var thead = document.createElement("thead");
+    var headRow = document.createElement("tr");
+    headRow.appendChild(el("th", null, "El"));
+    game.players.forEach(function (p) { headRow.appendChild(el("th", null, p.name)); });
+    headRow.appendChild(el("th", null, ""));
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    var tbody = document.createElement("tbody");
+    var runningTotals = {};
+    game.players.forEach(function (p) {
+      runningTotals[p.id] = game.mode === "target_down" ? game.startScore : 0;
+    });
+
+    game.rounds.forEach(function (round, idx) {
+      var tr = document.createElement("tr");
+      tr.appendChild(el("td", null, String(idx + 1)));
+      game.players.forEach(function (p) {
+        var delta = round.scores[p.id] || 0;
+        runningTotals[p.id] += delta;
+        tr.appendChild(el("td", null, (delta >= 0 ? "+" : "") + delta));
+      });
+      var actionsTd = document.createElement("td");
+      actionsTd.className = "round-actions";
+      var delBtn = document.createElement("button");
+      delBtn.type = "button";
+      delBtn.textContent = "🗑";
+      delBtn.addEventListener("click", function () {
+        if (!confirm("Bu el silinsin mi?")) return;
+        game.rounds.splice(idx, 1);
+        saveState();
+        renderGame();
+      });
+      actionsTd.appendChild(delBtn);
+      tr.appendChild(actionsTd);
+      tbody.appendChild(tr);
+    });
+
+    table.appendChild(tbody);
+    container.appendChild(table);
+  }
+
+  document.getElementById("btnSaveRound").addEventListener("click", function () {
+    var game = state.currentGame;
+    if (!game) return;
+    var inputs = document.querySelectorAll(".round-score-input");
+    var scores = {};
+    inputs.forEach(function (input) {
+      scores[input.dataset.playerId] = parseInt(input.value, 10) || 0;
+    });
+    game.rounds.push({ scores: scores });
+    saveState();
+    renderGame();
+  });
+
+  document.getElementById("btnEndGame").addEventListener("click", function () {
+    var game = state.currentGame;
+    if (!game) return;
+    if (!confirm("Oyunu bitirmek istediğinize emin misiniz?")) return;
+
+    var totals = totalsForGame(game);
+    var winnerId = checkWinner(game);
+    if (!winnerId) {
+      var sorted = game.players.slice().sort(function (a, b) {
+        return lowerIsBetter(game) ? totals[a.id] - totals[b.id] : totals[b.id] - totals[a.id];
+      });
+      winnerId = sorted.length ? sorted[0].id : null;
+    }
+
+    game.finished = true;
+    game.winnerId = winnerId;
+    game.finishedAt = Date.now();
+    state.history.push(game);
+    state.currentGame = null;
+    saveState();
+    show("view-menu");
+    renderMenu();
+  });
+
+  document.getElementById("btnBackToMenu").addEventListener("click", function () {
+    show("view-menu");
+    renderMenu();
+  });
+
+  // ---------- Init ----------
+  initTheme();
+  loadState();
+  renderMenu();
+  show("view-menu");
+})();
+</script>
+</body>
+</html>
