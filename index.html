@@ -54,6 +54,44 @@
     padding: 16px 16px 24px;
   }
 
+  .app:has(#view-game:not(.hidden)) {
+    max-width: 1400px;
+  }
+
+  .game-columns {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .game-columns > .card { width: 100%; }
+
+  .game-actions {
+    display: flex;
+    flex-direction: column;
+  }
+  .game-actions .btn { width: 100%; }
+
+  @media (min-width: 900px) {
+    .game-columns {
+      flex-direction: row;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .game-columns > .card {
+      width: 50%;
+      margin-bottom: 0;
+    }
+
+    .game-actions {
+      flex-direction: row;
+      gap: 14px;
+    }
+    .game-actions .btn {
+      width: 50%;
+      margin-bottom: 0;
+    }
+  }
+
   .topbar {
     display: flex;
     align-items: center;
@@ -444,15 +482,17 @@
   <div id="view-game" class="hidden">
     <div id="winnerBanner"></div>
 
-    <div class="card">
-      <div class="progress-bar" id="gameProgress"></div>
-      <div class="scoreboard" id="scoreboard"></div>
-    </div>
+    <div class="game-columns">
+      <div class="card">
+        <div class="progress-bar" id="gameProgress"></div>
+        <div class="scoreboard" id="scoreboard"></div>
+      </div>
 
-    <div class="card" id="addRoundCard">
-      <h2>Yeni El Ekle</h2>
-      <div class="round-form-grid" id="roundForm"></div>
-      <button class="btn btn-yellow" id="btnSaveRound" type="button">Eli Kaydet</button>
+      <div class="card" id="addRoundCard">
+        <h2>Yeni El Ekle</h2>
+        <div class="round-form-grid" id="roundForm"></div>
+        <button class="btn btn-yellow" id="btnSaveRound" type="button">Eli Kaydet</button>
+      </div>
     </div>
 
     <div class="card">
@@ -462,8 +502,10 @@
       </details>
     </div>
 
-    <button class="btn btn-outline btn-danger" id="btnEndGame" type="button">Oyunu Bitir</button>
-    <button class="btn btn-outline" id="btnBackToMenu" type="button">Ana Menüye Dön</button>
+    <div class="game-actions">
+      <button class="btn btn-outline" id="btnBackToMenu" type="button">Ana Menüye Dön</button>
+      <button class="btn btn-outline btn-danger" id="btnEndGame" type="button">Oyunu Bitir</button>
+    </div>
   </div>
 </div>
 
